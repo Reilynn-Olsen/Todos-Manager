@@ -237,14 +237,67 @@ document.addEventListener('DOMContentLoaded', async () => {
       const todoToUpdate = await todoManager.then((obj) =>
         obj.getTodoById(putID)
       );
-      //fills out the form form based on given information
 
+      //fills out the form form based on given information
       fillOutForm(todoToUpdate);
 
       //adds an event listener for updating the todo
       //handles both save and complete
-
-      formModal.addEventListener('click', updateTodoEvent);
+      //makes a put request to update a todo by the given form dat
+      formModal.addEventListener('click', async (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        if (event.target.getAttribute('type') === 'submit') {
+          const updateTodoFormData = new FormData(
+            formModal.getElementsByTagName('form')[0]
+          );
+          if (updateTodoFormData.get('title').trim().length >= 3) {
+            const putResponse = await fetch(
+              '/api/todos/' + putID,
+              {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formatFormData(updateTodoFormData)),
+              }
+            );
+            if (putResponse.ok) {
+              await putResponse
+                .json()
+                .then((res) =>
+                  todoManager.then((obj) => obj.updateTodoById(putID, res))
+                );
+              await todoManager.then((obj) => obj.renderHandleBars());
+            }
+          } else {
+            alert(
+              "The todo's title must be at least 3 characters long, not including white space"
+            );
+          }
+        } else if (event.target.getAttribute('name') === 'complete') {
+          const completeResponse = await fetch(
+            '/api/todos/' + putID,
+            {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ completed: true }),
+            }
+          );
+          if (completeResponse.ok) {
+            await todoManager.then((obj) => {
+              if (!todoToUpdate.completed) {
+                obj.flipCompleteATodoById(putID);
+              }
+              obj.renderHandleBars();
+            });
+          } else {
+            alert('did not go through');
+          }
+        }
+      });
 
       //this handles clicking on the check mark, or the non text elements of a todo to mark it complete
     } else if (
@@ -346,62 +399,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  //makes a put request to update a todo by the given form data
-  async function updateTodoEvent(event) {
-    const formModal = document.getElementById('form_modal');
-    event.stopPropagation();
-    event.preventDefault();
-    if (event.target.getAttribute('type') === 'submit') {
-      const updateTodoFormData = new FormData(
-        formModal.getElementsByTagName('form')[0]
-      );
-      if (updateTodoFormData.get('title').trim().length >= 3) {
-        const putResponse = await fetch(
-          '/api/todos/' + putID,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formatFormData(updateTodoFormData)),
-          }
-        );
-        if (putResponse.ok) {
-          await putResponse
-            .json()
-            .then((res) =>
-              todoManager.then((obj) => obj.updateTodoById(putID, res))
-            );
-          await todoManager.then((obj) => obj.renderHandleBars());
-        }
-      } else {
-        alert(
-          "The todo's title must be at least 3 characters long, not including white space"
-        );
-      }
-    } else if (event.target.getAttribute('name') === 'complete') {
-      const completeResponse = await fetch(
-        '/api/todos/' + putID,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ completed: true }),
-        }
-      );
-      if (completeResponse.ok) {
-        await todoManager.then((obj) => {
-          if (!todoToUpdate.completed) {
-            obj.flipCompleteATodoById(putID);
-          }
-          obj.renderHandleBars();
-        });
-      } else {
-        alert('did not go through');
-      }
-    }
-  }
+  
 
   //makes a delete request to delete the clicked on todo
   async function deleteTodoEvent(event) {
