@@ -1,0 +1,2 @@
+A todo manager web app. Live demo can be found here: https://todo-mgmt.herokuapp.com/ All backend/api code was given to me from Launch School.
+This app allows you to make new todos, sort through todos, and more!
