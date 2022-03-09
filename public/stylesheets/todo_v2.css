@@ -340,16 +340,4 @@ input[type="checkbox"] + section {
   background: rgba(0, 0, 0, 0.4);
   z-index: 1;
 }
-@media (max-width: 768px){
-  #items header img{
-    display: block;
-  }
-  #sidebar{
-    display: none;
-  }
 
-  #sidebar_toggle:checked + #sidebar{
-    display: block;
-  }
-
-}

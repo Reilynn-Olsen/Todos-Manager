@@ -348,6 +348,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   //makes a put request to update a todo by the given form data
   async function updateTodoEvent(event) {
+    const formModal = document.getElementById('form_modal');
     event.stopPropagation();
     event.preventDefault();
     if (event.target.getAttribute('type') === 'submit') {
