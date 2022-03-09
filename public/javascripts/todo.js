@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   //creates a new todo based on the results of the get request
-  const todoManager = fetch('http://localhost:3000/api/todos', {
+  const todoManager = fetch('/api/todos', {
     method: 'GET',
   })
     .then((res) => res.json())
@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
 
     const completeResponse = await fetch(
-      'http://localhost:3000/api/todos/' + completeID,
+      'https://todo-mgmt.herokuapp.com/api/todos/' + completeID,
       {
         method: 'PUT',
         headers: {
@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         formModal.getElementsByTagName('form')[0]
       );
       if (newTodoFormData.get('title').trim().length >= 3) {
-        const postResponse = await fetch('http://localhost:3000/api/todos', {
+        const postResponse = await fetch('https://todo-mgmt.herokuapp.com/api/todos', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -356,7 +356,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       );
       if (updateTodoFormData.get('title').trim().length >= 3) {
         const putResponse = await fetch(
-          'http://localhost:3000/api/todos/' + putID,
+          'https://todo-mgmt.herokuapp.com/api/todos/' + putID,
           {
             method: 'PUT',
             headers: {
@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     } else if (event.target.getAttribute('name') === 'complete') {
       const completeResponse = await fetch(
-        'http://localhost:3000/api/todos/' + putID,
+        'https://todo-mgmt.herokuapp.com/api/todos/' + putID,
         {
           method: 'PUT',
           headers: {
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       event.target.parentNode.getAttribute('data-id') ||
       event.target.parentNode.parentNode.getAttribute('data-id');
 
-    const deleteRequest = fetch('http://localhost:3000/api/todos/' + deleteID, {
+    const deleteRequest = fetch('https://todo-mgmt.herokuapp.com//api/todos/' + deleteID, {
       method: 'DELETE',
     });
     await deleteRequest.then(async (res) => {
