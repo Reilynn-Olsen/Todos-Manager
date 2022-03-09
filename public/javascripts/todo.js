@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         //when a nav item disappeared from the completed list and "fell back" to the all todos version of the list
         //the todoManager would still view the todo that's completed as selected, this fixes by it, by setting the selection
         //to non completed items
-        this.selection.completed = false
+        this.selection.completed = false;
         selectedArray = this.todos;
       }
       //filters based on date
@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       event.target.classList.contains('delete') ||
       event.target.getAttribute('alt') === 'Delete'
     ) {
-      deleteTodoEvent(event)
+      deleteTodoEvent(event);
       //this handles when a todo is clicked on and needs to updated
       //the and was included to make sure that the attribute for 'for' exists if it doesn't it returns null and doesn't evaluate
       //the second half of the statement, this was done to prevent a type error of calling includes on null
@@ -251,19 +251,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       event.target.classList.contains('list_item') ||
       event.target.classList.contains('check')
     ) {
-      completeTodoEvent(event)
+      completeTodoEvent(event);
       //this handles the side bar clicks, highlights and rerenders as properly
     } else if (
       allSideBar.contains(event.target) &&
       !allSideBar.isSameNode(event.target) &&
       event.target.tagName !== 'SECTION'
     ) {
-      navBarClickEvent(event)
+      navBarClickEvent(event);
     }
   });
 
   //sets the todoManagers selection object to the date and completed status of the clicked nav bar element
-  async function navBarClickEvent(event){
+  async function navBarClickEvent(event) {
     const selectedNode = changeActiveNode(event.target);
     const allCompletedParentNode = document.getElementById('completed_items');
     const todoCompleted = allCompletedParentNode.contains(selectedNode);
@@ -277,37 +277,37 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   //makes a put request to complete the clicked todo
-  async function completeTodoEvent(event){
+  async function completeTodoEvent(event) {
     let completeID;
-      if (event.target.classList.contains('list_item')) {
-        completeID = event.target.childNodes[1]
-          .getAttribute('id')
-          .match(/[0-9]+/)[0];
-      } else {
-        completeID = event.target.parentNode.childNodes[1]
-          .getAttribute('id')
-          .match(/[0-9]+/)[0];
-      }
-      const completeTodo = await todoManager.then((obj) =>
-        obj.getTodoById(completeID)
-      );
+    if (event.target.classList.contains('list_item')) {
+      completeID = event.target.childNodes[1]
+        .getAttribute('id')
+        .match(/[0-9]+/)[0];
+    } else {
+      completeID = event.target.parentNode.childNodes[1]
+        .getAttribute('id')
+        .match(/[0-9]+/)[0];
+    }
+    const completeTodo = await todoManager.then((obj) =>
+      obj.getTodoById(completeID)
+    );
 
-      const completeResponse = await fetch(
-        'http://localhost:3000/api/todos/' + completeID,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ completed: !completeTodo.completed }),
-        }
-      );
-      if (completeResponse.ok) {
-        await todoManager.then((obj) => {
-          obj.flipCompleteATodoById(completeID);
-          obj.renderHandleBars();
-        });
+    const completeResponse = await fetch(
+      'http://localhost:3000/api/todos/' + completeID,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ completed: !completeTodo.completed }),
       }
+    );
+    if (completeResponse.ok) {
+      await todoManager.then((obj) => {
+        obj.flipCompleteATodoById(completeID);
+        obj.renderHandleBars();
+      });
+    }
   }
 
   //makes a post request for a new todo and handles validating input
@@ -403,25 +403,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   //makes a delete request to delete the clicked on todo
-  async function deleteTodoEvent(event){
+  async function deleteTodoEvent(event) {
     const deleteID =
-    event.target.parentNode.getAttribute('data-id') ||
-    event.target.parentNode.parentNode.getAttribute('data-id');
+      event.target.parentNode.getAttribute('data-id') ||
+      event.target.parentNode.parentNode.getAttribute('data-id');
 
-  const deleteRequest = fetch(
-    'http://localhost:3000/api/todos/' + deleteID,
-    {
+    const deleteRequest = fetch('http://localhost:3000/api/todos/' + deleteID, {
       method: 'DELETE',
-    }
-  );
-  await deleteRequest.then(async (res) => {
-    if (res.ok) {
-      await todoManager.then((obj) => {
-        obj.deleteATodoById(deleteID);
-        obj.renderHandleBars();
-      });
-    }
-  });
+    });
+    await deleteRequest.then(async (res) => {
+      if (res.ok) {
+        await todoManager.then((obj) => {
+          obj.deleteATodoById(deleteID);
+          obj.renderHandleBars();
+        });
+      }
+    });
   }
 
   //this pops up the modal and adds a click event to hide it
